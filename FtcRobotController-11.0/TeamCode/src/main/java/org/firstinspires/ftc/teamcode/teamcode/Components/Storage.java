@@ -1,44 +1,93 @@
 package org.firstinspires.ftc.teamcode.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.dashboard;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.gm1;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.prevgm1;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.prevnext;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.hardware.android.Rev3328;
+import org.firstinspires.ftc.robotcore.internal.network.RobotCoreCommandList;
+import org.firstinspires.ftc.teamcode.teamcode.Stuff.PIDController;
+
 public class Storage {
     private CRServo revolver;
-    double p = 1.0, t=200; boolean ok;
     ElapsedTime timer = new ElapsedTime();
+    ElapsedTime time = new ElapsedTime();
+    double p = 1.0, t=2000; boolean ok; Gamepad gamepad2;
+    boolean next = false, prevnext = false;
+    DcMotorEx encoder;
+    public PIDController turner;
+    public double Target = 0;
+
     int n=0;
-    public Storage (CRServo revolver){
-        this.revolver=revolver;
+    public enum IntakeState{
+        IDLE,
+        ACTIVE,
+
+    };
+    public enum StorageState{
+        BALL1,
+        BALL2,
+        BALL3,
     }
-    public void update (Gamepad gamepad1) {
-        if (gamepad1.triangle && ok==true){
-            ok=false; return;
-        }
-        else if (gamepad1.triangle && ok==false){
-            ok=true; return;
-        }
-        if (ok == true) {
-            if (timer.milliseconds() < t) {
-                revolver.setPower(p);
-            } else if (timer.milliseconds() < t + 25) {
-                revolver.setPower(-0.5);
-            } else if (timer.milliseconds() < 1100) {
-                revolver.setPower(0);
-            } else {
-                n++;
-                timer.reset();
-            }
-            dashboard.addData("time", timer.milliseconds());
-        }
-        else {
-            timer.reset(); return;
+    StorageState state1 = StorageState.BALL1; private DcMotorEx motor;
+    IntakeState state2 = IntakeState.IDLE;
+
+    public Storage (CRServo revolver,DcMotorEx encoder, DcMotorEx motor){
+        this.revolver = revolver;
+        this.encoder = encoder;
+        this.motor = motor;
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        turner = new PIDController(0,0,0);
+        revolver.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public double FromTicksToDegrees(){
+        return encoder.getCurrentPosition() / 8192.0 * Math.PI * 2.0;
+    }
+
+    public void Turn120(){
+        Target -= Math.PI * 2 / 3;
+        turner.setTargetPosition(Target);
+    }
+
+    public void update()
+    {
+        revolver.setPower(turner.calculatePower(FromTicksToDegrees()));
+    }
+    public void Index(){
+        if (timer.milliseconds()>3000) {
+            Turn120();
+        timer.reset();
         }
 
+    }
+    public void TakeBall(){
+        switch (state2){
+            case IDLE:
+                if (prevgm1.right_bumper==gm1.right_bumper && gm1.right_bumper){
+                    state2=IntakeState.ACTIVE; time.reset();
+                }
+                break;
+            case ACTIVE:
+                if (time.milliseconds()>500) {
+                    Turn120(); timer.reset();
+                    state2 = IntakeState.IDLE;
+                }
+                break;
+        }
+    }
+    public boolean IsStorageSpinning(){
+        return Math.abs(Target-FromTicksToDegrees()) < Math.toRadians(5) && encoder.getVelocity() < 20;
     }
 
 }

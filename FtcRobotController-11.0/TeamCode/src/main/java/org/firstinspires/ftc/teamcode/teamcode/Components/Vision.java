@@ -21,7 +21,7 @@ public class Vision {
     public AprilTagProcessor tagProcessor;
     public VisionPortal visionPortal;
     double fx=752.848, fy=752.848, cx=314.441, cy=219.647;
-    double n =3.33;
+    double n =10/3;
     private WebcamName webcam;
 
     public Vision(DcMotorEx rotate,WebcamName webcam){
@@ -56,25 +56,32 @@ public class Vision {
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
         if (detections.isEmpty()) {
             dashboard.addLine("No tag detected.");
+            return;
         } else {
             AprilTagDetection tag = detections.get(0);
             dashboard.addData("deg", tag.robotPose);
             if (tag.ftcPose == null) {
                 dashboard.addData("Tag id ", tag.id);
                 dashboard.addLine("tag not valid");
-                return;
+                return; 
             }
             if (tag.id == 20) {
                 int a = (int) (tag.ftcPose.bearing);
                 int target = (int) (a * n);
-                if (a > 1) {
                     rotate.setTargetPosition(target);
                     rotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     rotate.setPower(0.25);
-                }
+                    dashboard.addData("target", a);
+                dashboard.addData("deg", tag.ftcPose.bearing);
+                dashboard.addData("pos", rotate.getCurrentPosition());
+
+                dashboard.update();
             }
-            dashboard.addData("deg", tag.ftcPose.bearing);
-            dashboard.addData("pos", rotate.getCurrentPosition());
-        }
     }
+
     }
+
+
+
+
+}

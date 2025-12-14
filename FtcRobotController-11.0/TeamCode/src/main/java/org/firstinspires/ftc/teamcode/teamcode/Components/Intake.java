@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teamcode.Components;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.dashboard;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.gm1;
 
 import android.graphics.Color;
 
@@ -30,17 +31,18 @@ public class Intake {
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    public void update(Gamepad gamepad1) {
-        boolean x = gamepad1.left_bumper;
-        boolean y = gamepad1.right_bumper;
+    public void update() {
+        boolean x = gm1.left_bumper;
+        boolean y = gm1.right_bumper;
         if (x==true)
         intakeMotor.setPower(1);
         else if (y==true) {
             intakeMotor.setPower(-1);
         }
-        else {
-            intakeMotor.setPower(0);
-        }
+
+    }
+    public void run(){
+        intakeMotor.setPower(1);
     }
 
 }

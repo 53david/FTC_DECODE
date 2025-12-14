@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class DriveTrain {
     private final DcMotorEx leftFront, rightFront, leftBack, rightBack;
-    Servo transfer;
+    Servo transfer; ElapsedTime timer1 = new ElapsedTime();
+    ElapsedTime timer2 = new ElapsedTime();
     boolean ok;
     public DriveTrain(DcMotorEx leftFront, DcMotorEx rightFront, DcMotorEx leftBack, DcMotorEx rightBack) {
 
@@ -66,6 +68,22 @@ public class DriveTrain {
         leftBack.setPower(backLeftPower);
         rightFront.setPower(frontRightPower);
         rightBack.setPower(backRightPower);
+    }
+    public void strafe(){
+        if (timer1.milliseconds()<1000){
+            leftFront.setPower(-1);
+            leftBack.setPower(1);
+            rightFront.setPower(1);
+            rightBack.setPower(-1);
+        }
+    }
+    public void backward(){
+        if (timer2.milliseconds()<1000){
+            leftFront.setPower(-1);
+            rightFront.setPower(-1);
+            leftBack.setPower(-1);
+            rightBack.setPower(-1);
+        }
     }
 
 }

@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.teamcode.OpModes;
 
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -25,48 +21,37 @@ import org.firstinspires.ftc.teamcode.teamcode.Components.Vision;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-@TeleOp(name = "Mascul Feroce")
-public class Teleop extends LinearOpMode {
-
+@Autonomous(name="Mascul fioros")
+public class Auto extends LinearOpMode {
     private DriveTrain chassis; private Intake intake; private CRServo servo; public static Vision vision;
     private Outake outake; Servo transfer; private Storage storage;
     private VisionPortal visionPortal;
     private AprilTagProcessor tagProcessor;
     public static PIDCoefficients coefs = new PIDCoefficients(0.25 ,0.003, 0.004);
     DcMotorEx intakeMotor,rotate,leftFront,leftBack,rightBack,rightFront,shoot1,shoot2;
+    ElapsedTime timer = new ElapsedTime();
     WebcamName webcam1;
     RevColorSensorV3 colorSensor1,colorSensor2;
-
-    public static boolean next = false,prevnext = false;
-
-    public static Gamepad prevgm1,prevgm2;
-    public static Gamepad gm1,gm2;
+    public boolean ok1=true,ok2=true,ok3=true;
     public static Telemetry dashboard;
-
     @Override
     public void runOpMode() throws InterruptedException {
+
         initializeHardware();
-        prevgm1 = new Gamepad();
-        prevgm2 = new Gamepad();
-        gm1 = new Gamepad();
-        gm2 = new Gamepad();
         waitForStart();
-        while (opModeIsActive()) {
-            gm1.copy(gamepad1);
-            gm2.copy(gamepad2);
-            outake.update();
-            outake.shooter();
-            chassis.drive(gamepad1);
-            intake.update();
-            storage.update();
-            storage.Index();
-            dashboard.update();
-            telemetry.update();
-            prevgm1.copy(gamepad1);
-            prevgm2.copy(gamepad2);
-
+        while(opModeIsActive()){
+            if (timer.seconds()<30) {
+                chassis.backward();
+                intake.run();
+                storage.update();
+                storage.Index();
+                outake.shoot();
+                outake.run();
+                if (timer.seconds() > 25) {
+                    chassis.strafe();
+                }
+            }
         }
-
     }
     private void initializeHardware() {
         servo = hardwareMap.get(CRServo.class,"servo");
@@ -95,4 +80,5 @@ public class Teleop extends LinearOpMode {
         storage.turner.setPidCoefficients(coefs);
 
     }
+
 }
