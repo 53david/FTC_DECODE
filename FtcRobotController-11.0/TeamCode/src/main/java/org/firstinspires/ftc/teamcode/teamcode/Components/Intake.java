@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.teamcode.Components;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.dashboard;
 import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.gm1;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.prevgm1;
 
 import android.graphics.Color;
 
@@ -32,12 +33,13 @@ public class Intake {
     }
 
     public void update() {
-        boolean x = gm1.left_bumper;
-        boolean y = gm1.right_bumper;
-        if (x==true)
-        intakeMotor.setPower(1);
-        else if (y==true) {
-            intakeMotor.setPower(-1);
+        if (gm1.right_bumper==prevgm1.right_bumper && gm1.right_bumper)
+        intakeMotor.setPower(-1);
+        else if (gm1.left_bumper==prevgm1.left_bumper && gm1.left_bumper) {
+            intakeMotor.setPower(1);
+        }
+        else {
+            intakeMotor.setPower(-0.4);
         }
 
     }

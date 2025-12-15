@@ -32,7 +32,7 @@ public class Teleop extends LinearOpMode {
     private Outake outake; Servo transfer; private Storage storage;
     private VisionPortal visionPortal;
     private AprilTagProcessor tagProcessor;
-    public static PIDCoefficients coefs = new PIDCoefficients(0.25 ,0.003, 0.004);
+    public static PIDCoefficients coefs = new PIDCoefficients(0.2 ,0, 0.001);
     DcMotorEx intakeMotor,rotate,leftFront,leftBack,rightBack,rightFront,shoot1,shoot2;
     WebcamName webcam1;
     RevColorSensorV3 colorSensor1,colorSensor2;
@@ -56,14 +56,14 @@ public class Teleop extends LinearOpMode {
             gm2.copy(gamepad2);
             outake.update();
             outake.shooter();
-            chassis.drive(gamepad1);
+            chassis.drive();
             intake.update();
             storage.update();
-            storage.Index();
+            storage.TakeBall();
             dashboard.update();
             telemetry.update();
-            prevgm1.copy(gamepad1);
-            prevgm2.copy(gamepad2);
+            prevgm1.copy(gm1);
+            prevgm2.copy(gm2);
 
         }
 

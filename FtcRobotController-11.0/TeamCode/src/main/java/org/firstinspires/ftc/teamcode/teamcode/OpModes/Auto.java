@@ -41,14 +41,23 @@ public class Auto extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             if (timer.seconds()<30) {
-                chassis.backward();
+                if (timer.seconds()<1.75) {
+                    chassis.backward();
+                }
+                if (timer.seconds()>1.75 && timer.seconds()<3){
+                    chassis.stop();
+                }
                 intake.run();
                 storage.update();
                 storage.Index();
                 outake.shoot();
                 outake.run();
-                if (timer.seconds() > 25) {
+                if (timer.seconds() > 15 && timer.seconds()<16.75) {
                     chassis.strafe();
+                }
+                if (timer.seconds()>16.75 && timer.seconds()<17.50){
+                    chassis.stop();
+                    terminateOpModeNow();
                 }
             }
         }

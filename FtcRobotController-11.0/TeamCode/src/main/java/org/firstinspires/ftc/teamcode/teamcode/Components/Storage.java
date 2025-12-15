@@ -74,17 +74,22 @@ public class Storage {
     public void TakeBall(){
         switch (state2){
             case IDLE:
+                dashboard.addLine("IDLE");
+                Index();
                 if (prevgm1.right_bumper==gm1.right_bumper && gm1.right_bumper){
                     state2=IntakeState.ACTIVE; time.reset();
+
                 }
                 break;
             case ACTIVE:
+                dashboard.addLine("ACTIVE");
                 if (time.milliseconds()>500) {
                     Turn120(); timer.reset();
                     state2 = IntakeState.IDLE;
                 }
                 break;
         }
+        dashboard.update();
     }
     public boolean IsStorageSpinning(){
         return Math.abs(Target-FromTicksToDegrees()) < Math.toRadians(5) && encoder.getVelocity() < 20;

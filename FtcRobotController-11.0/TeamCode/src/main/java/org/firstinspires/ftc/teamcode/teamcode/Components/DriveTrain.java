@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamcode.Components;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
+import static org.firstinspires.ftc.teamcode.teamcode.OpModes.Teleop.gm1;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,10 +25,10 @@ public class DriveTrain {
         this.leftBack=leftBack;
         this.rightBack = rightBack;
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
-        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        leftFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -53,11 +54,11 @@ public class DriveTrain {
         }
         else return;
     }
-    public void drive(Gamepad gamepad1) {
+    public void drive() {
 
-        double y = -gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x*1.1;
-        double rx = gamepad1.right_trigger-gamepad1.left_trigger;
+        double y = -gm1.left_stick_y;
+        double x = gm1.left_stick_x*1.1;
+        double rx = gm1.right_trigger-gm1.left_trigger;
         scale(x);scale(y);scale(rx);
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx)/ denominator;
@@ -69,21 +70,24 @@ public class DriveTrain {
         rightFront.setPower(frontRightPower);
         rightBack.setPower(backRightPower);
     }
-    public void strafe(){
-        if (timer1.milliseconds()<1000){
+    public void strafe() {
             leftFront.setPower(-1);
             leftBack.setPower(1);
             rightFront.setPower(1);
             rightBack.setPower(-1);
-        }
     }
-    public void backward(){
-        if (timer2.milliseconds()<1000){
-            leftFront.setPower(-1);
-            rightFront.setPower(-1);
-            leftBack.setPower(-1);
-            rightBack.setPower(-1);
-        }
-    }
+        public void backward(){
+                leftFront.setPower(-1);
+                rightFront.setPower(-1);
+                leftBack.setPower(-1);
+                rightBack.setPower(-1);
 
-}
+        }
+        public void stop(){
+        leftFront.setPower(0);
+        rightBack.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        }
+
+    }

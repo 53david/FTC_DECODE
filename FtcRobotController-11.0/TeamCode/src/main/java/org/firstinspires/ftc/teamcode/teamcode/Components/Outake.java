@@ -49,7 +49,7 @@ public class Outake {
     }
 
     public void update() {
-        if (gm2.circle==true) {
+        if (gm2.circle) {
             servo.setPosition(0);
         } else {
             servo.setPosition(0.95);
@@ -60,14 +60,14 @@ public class Outake {
             switch (state){
                 case CLOSE:
                     telemetry.addLine("CLOSE");
-                    if (gm2.triangle!=prevgm2.triangle && gm2.triangle==true)
+                    if (gm2.right_trigger==prevgm2.right_trigger && gm2.right_trigger>0)
                         state=State.FAR;
                     shoot1.setPower(-0.65);
                     shoot2.setPower(0.65);
                     break;
                 case FAR:
                     telemetry.addLine("FAR");
-                    if (gm2.triangle!=prevgm2.square && gm2.square==true)
+                    if (gm2.triangle==prevgm2.square && gm2.right_trigger==0)
                         state=State.CLOSE;
                     shoot1.setPower(-0.75);
                     shoot2.setPower(0.75);
