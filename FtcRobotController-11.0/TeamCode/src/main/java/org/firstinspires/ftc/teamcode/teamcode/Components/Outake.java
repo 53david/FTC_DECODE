@@ -44,8 +44,6 @@ public class Outake {
         this.telemetry = telemetry;
         shoot1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shoot2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
     }
 
     public void update() {
