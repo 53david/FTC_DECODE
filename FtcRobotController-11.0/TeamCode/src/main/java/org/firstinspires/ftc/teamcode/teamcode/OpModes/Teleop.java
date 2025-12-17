@@ -62,6 +62,7 @@ public class Teleop extends LinearOpMode {
             storage.TakeBall();
             dashboard.update();
             telemetry.update();
+            vision.update();
             prevgm1.copy(gm1);
             prevgm2.copy(gm2);
 
